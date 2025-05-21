@@ -3,6 +3,9 @@
 **Trần Thái Dương**
 **Module: Visual Data Analytics - INT3137 1**
 
+> 📄 **For full visuals and detailed figures, [read the full report (PDF)](./document.pdf)**  
+> Includes high-res maps, charts, and analysis not shown here.
+
 ## Overview
 
 During the Vietnam War (1955–1975), the U.S. dropped approximately 7.5 million tons of bombs. Decades later, over 800,000 tons of unexploded ordnance (UXO) remain across Vietnam, contaminating about 18.7% of its land. This report analyzes UXO risk at national (ADM0), provincial (ADM1), district (ADM2), and 10 km² grid levels. Using historical bombing data, terrain, population, and clearance records, the report identifies high-risk areas and proposes a prioritization framework for UXO clearance.
