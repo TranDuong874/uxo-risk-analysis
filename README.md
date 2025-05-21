@@ -1,62 +1,136 @@
-# UXO Risk Analysis in Vietnam
+# UXO Contamination Risk and Clearance Priority in Vietnam
 
-## 📌 Introduction
+**Trần Thái Dương**
+**Module: Visual Data Analytics - INT3137 1**
 
-During the **Vietnam War Resistance Against the United States (1955–1975)**, the U.S. military conducted an extensive aerial bombing campaign across Vietnam, Laos, and Cambodia. According to historical records, the United States carried out over **3 million air missions** during the war and dropped approximately **7.5 million tons of bombs** — more than all bombs used in World War II combined.
+## Overview
 
-This intense bombing has led to widespread **Explosive War Remnants (EWR)**, especially **Unexploded Ordnance (UXO)**, which continue to pose severe threats to lives, agriculture, and socio-economic development in the region. These lingering remnants of war have **caused countless injuries, deaths, and land contamination**, making large areas uninhabitable or dangerous to cultivate.
+During the Vietnam War (1955–1975), the U.S. dropped approximately 7.5 million tons of bombs. Decades later, over 800,000 tons of unexploded ordnance (UXO) remain across Vietnam, contaminating about 18.7% of its land. This report analyzes UXO risk at national (ADM0), provincial (ADM1), district (ADM2), and 10 km² grid levels. Using historical bombing data, terrain, population, and clearance records, the report identifies high-risk areas and proposes a prioritization framework for UXO clearance.
 
----
+## Contents
 
-## 📊 Bombs Dropped Visualization
-
-![Bomb, Missile, Rocket Count 3D Chart](graph_images/bomb_missile_rocket_count_dark.png)
-
-*Figure: A 3D column chart showing the number of bombs, missiles, and rockets dropped during the war. Each vertical column represents the quantity dropped by type, giving a visual overview of the scale of aerial operations.*
-
----
-
-## 🎯 Project Objective
-
-This project applies **data science and geospatial analysis techniques** to:
-- Identify regions in Vietnam with a **high risk of UXO contamination**.
-- Support **strategic UXO clearance planning** by estimating cleanup **costs and prioritization**.
-- Provide **interactive visualizations** to communicate historical and predictive insights to stakeholders.
-
-The ultimate goal is to assist humanitarian demining efforts and policy-making by turning complex war data into actionable insights.
+1. [Introduction](#introduction)
+2. [Research Questions](#research-questions)
+3. [Data Sources and Processing](#data-sources-and-processing)
+4. [U.S. Bombing Data](#us-bombing-data)
+5. [Risk Assessment Model](#risk-assessment-model)
+6. [Clearance Priority Strategy](#clearance-priority-strategy)
+7. [Conclusion](#conclusion)
 
 ---
 
-## 📁 Dataset
+## Introduction
 
-We use the **[US Air Force Bombing Database (THOR)](https://www.kaggle.com/datasets/usaf/air-force-bombing-database-thor)**, which contains detailed records of aerial missions flown by the U.S. during major 20th-century conflicts, including:
-- Dates and locations of air missions
-- Weapon types and quantities used
-- Target information and outcomes
-
-**Data Source:** Kaggle  
-🔗 [USAF THOR Bombing Database on Kaggle](https://www.kaggle.com/datasets/usaf/air-force-bombing-database-thor)
+UXO affects lives, infrastructure, and development. This project aims to assess UXO contamination risk and suggest clearance priorities based on actionable data analytics.
 
 ---
 
-## 🛠️ Technologies Used
+## Research Questions
 
-- Python (Pandas, Matplotlib, Seaborn)
-- Kepler.gl and other GIS tools
-- Jupyter Notebooks for EDA
-- Data preprocessing and spatial clustering
+1. **Which areas are at risk of UXO contamination?**
+   Risk levels will be derived from bombing data, weapon types, dud rates, and geographic density.
 
----
-
-## 📌 Next Steps
-
-- Use machine learning to model UXO risk zones
-- Incorporate population and infrastructure data
-- Recommend optimal cleanup strategies based on cost-risk analysis
+2. **Which areas should be prioritized for clearance?**
+   Priority will be evaluated using risk levels, population, terrain, and feasibility factors.
 
 ---
 
-## 📜 License
+## Data Sources and Processing
 
-This project is for educational and humanitarian purposes only. Please cite the data source if reused.
+| Dataset            | Description                           | Source             |
+| ------------------ | ------------------------------------- | ------------------ |
+| THOR               | Bombing operations during Vietnam War | U.S. DoD           |
+| QTMAC              | UXO reports and clearance activities  | Quảng Trị Province |
+| Vietnam Population | Provincial/district demographics      | GSO, 2023          |
+| Admin Boundaries   | Geospatial ADM0/1/2 boundaries        | GeoBoundaries      |
+| Land Use           | Satellite land cover (2020)           | JAXA               |
+| Dud Rates          | Weapon failure rates                  | Multiple sources   |
 
+The data pipeline includes cleaning mission records, filtering for Vietnam-based operations, assigning UXO risk, and mapping to different spatial scales.
+
+---
+
+## U.S. Bombing Data
+
+* **Data Files**: operations.csv (main), weapon.csv, aircraft.csv
+* **Cleaning Process**: Dropped missions without coordinates and filtered operations to include only those in or near Vietnam.
+* **Key Insights**:
+
+  * Most kinetic missions with high UXO risk were between 1965-1973.
+  * Non-kinetic missions (support, refueling) were excluded.
+
+---
+
+## Risk Assessment Model
+
+### Hierarchical Levels
+
+* **Level 3**: 10 km² grid
+* **Level 2**: ADM2 (District)
+* **Level 1**: ADM1 (Province/City)
+
+### Key Metrics
+
+| Metric          | Description                                        |
+| --------------- | -------------------------------------------------- |
+| Weapon Density  | Weapons per km²                                    |
+| Estimated UXO   | Derived from weapon count × dud rate               |
+| Composite Score | Combines UXO, mission density, and weapon severity |
+
+### Classification
+
+* Composite scores were normalized and grouped into 6 quantiles (Low to Extreme risk).
+* Risk levels were aggregated to ADM2 and ADM1 using weighted averages and majority voting.
+* A "hotspot" flag was set for provinces with ≥25% high/extreme risk areas.
+
+---
+
+## Clearance Priority Strategy
+
+### Supplementary Data
+
+* **Population**: Higher population = higher urgency
+* **Terrain**: Urban, agricultural prioritized over forest/wetlands
+
+### Budget Model
+
+* Clearance cost estimate: \$109,000/km²
+* Prioritization considered contamination, human impact, and feasibility
+
+### Priority Score Formula
+
+**Priority Score = W × Xnorm** where:
+
+* Xnorm = normalized metrics
+* W = weights derived from observed demining strategies
+
+### Example Weights
+
+| Metric                 | Weight           |
+| ---------------------- | ---------------- |
+| Estimated UXO          | 5.0              |
+| Population             | 5.0              |
+| Area                   | -2.0             |
+| Is Hotspot             | 3.0              |
+| Residence              | 2.5              |
+| Agricultural           | 1.5              |
+| Forest, Wetland, Shrub | Negative weights |
+| Developed Urban        | -10.0            |
+
+These weights reflect observed demining patterns (QTMAC, VNMAC).
+
+---
+
+## Conclusion
+
+This analysis combines bombing records with terrain, demographic, and UXO clearance data to estimate contamination risk and inform demining priorities. The resulting multi-level risk and priority models provide a foundation for data-driven UXO mitigation policies.
+
+**Key Insight**: Quảng Trị, Quảng Bình, and Quảng Nam provinces show the highest UXO risk. Applying the proposed model helps identify other urgent areas like Vĩnh Long once the highest-risk zones have been addressed.
+
+---
+
+## Notes
+
+* Data cleaning and spatial filtering were essential due to gaps in coordinate and mission data.
+* Composite scores and quantile binning provided balanced and interpretable classifications.
+* Future work could integrate ground-truth clearance data and community feedback to refine models.
